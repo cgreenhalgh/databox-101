@@ -6,27 +6,6 @@ Walking through getting started with Databox...
 
 (and find on Windows 7 I need to run in a VM anyway - see below)
 
-## Initial setup
-
-See https://github.com/me-box/databox
-
-Install docker for mac/windows (or docker toolbox if Windows < 10) (and docker-compose if not present)
-
-```
-git clone https://github.com/me-box/databox.git
-```
-Note, dev command-line option not in https://github.com/me-box/databox/blob/master/README.md as of 2017-09-25
-```
-cd databox
-./databox-start dev
-```
-
-minor issue:
-- install/start OS monitor driver and view UI quickly -> no reported error (UI stall, underlying 404)
-
-
-How to access from mobile app?
-
 ### Docker in VM
 
 (Docker Toolbox issues)
@@ -39,6 +18,30 @@ Increase memory to at least 2GB (1GB isn't enough)
 ```
 vagrant up
 ```
+
+Make a second disk and add in (in the VirtualBox UI) - the default 10GB won't be enough.
+Take the VM again down before you do. Make sure you work in there!
+
+Format the disk (here assuming 3rd disk, 'c'):
+```
+sudo fdisk -u /dev/sdc <<EOF
+n
+p
+1
+
+
+t
+83
+w
+EOF
+sudo mkfs -t ext4 /dev/sdc
+sudo mount /dev/sdc /srv
+sudo mkdir /srv/databox
+sudo chown $USER /srv/databox
+sudo mkdir /srv/docker
+```
+And add `/dev/sdc /srv` to `/etc/fstab` (as root)
+
 See [docs](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository)
 ```
 sudo apt-get update
@@ -63,6 +66,19 @@ Optional,
 ```
 sudo docker run hello-world
 ```
+
+Change where docker stores images, etc. 
+```
+sudo sh
+cd /var/lib/docker
+tar zcf /srv/docker.tgz *
+cd ..
+mv docker docker.1
+cd /srv/docker
+tar zxf ../docker.tgz
+ln -s /srv/docker /var/lib/docker
+```
+
 Docker compose, see [docs](https://docs.docker.com/compose/install/#install-compose):
 ```
 sudo curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -86,6 +102,29 @@ sudo systemctl enable docker
 ```
 
 Open port 8989 (main UI), 8181 (CM API?), 8086 (SDK), 9090 (SDK test).
+
+## Initial setup
+
+See https://github.com/me-box/databox
+
+Install docker for mac/windows (or docker toolbox if Windows < 10) (and docker-compose if not present)
+
+```
+git clone https://github.com/me-box/databox.git
+```
+Note, dev command-line option not in https://github.com/me-box/databox/blob/master/README.md as of 2017-09-25
+```
+cd databox
+./databox-start dev
+```
+
+minor issue:
+- install/start OS monitor driver and view UI quickly -> no reported error (UI stall, underlying 404)
+
+
+How to access from mobile app?
+
+## Various problems
 
 ### Docker toolbox issues
 
