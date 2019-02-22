@@ -12,21 +12,19 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "alpine/alpine64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+  config.vm.box_check_update = false
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  config.vm.network "forwarded_port", guest: 8989, host: 8989
-  config.vm.network "forwarded_port", guest: 8181, host: 8181
-  config.vm.network "forwarded_port", guest: 8086, host: 8086
-  config.vm.network "forwarded_port", guest: 9090, host: 9090
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 443, host: 8443
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -53,9 +51,12 @@ Vagrant.configure("2") do |config|
   # Example for VirtualBox:
   #
   config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+
+    # Enable the VM's virtual USB controller & enable the virtual USB 3 (xhci) or 2.0 (ehci) controller
+    vb.customize ["modifyvm", :id, "--usb", "on", "--usbxhci", "on"]  
+
     # Customize the amount of memory on the VM:
     vb.memory = "2048"
   end

@@ -1,306 +1,131 @@
-# databox dev notes
+# Databox 101
 
-Chris Greenhalgh, chris.greenhalgh@nottingham.ac.uk, 2017-09-25
+Building/running, and basis for provenance explorations.
 
-Walking through getting started with Databox...
+Databox 0.5.2-dev, 2019-02-22
 
-(and find on Windows 7 I need to run in a VM anyway - see below)
+Chris Greenhalgh, The University of Nottingham
 
-### Docker in VM
+## Vagrant
 
-(Docker Toolbox issues)
+Includes Alpine 64bit [vagrant](https://www.vagrantup.com/) file for (e.g.) Windows dev.
 
-(Vagrant 2.0.0)
+if using Vagrant
 ```
-vagrant init ubuntu/xenial64
+vagrant up
+vagrant ssh
+cd /vagrant
 ```
-Increase memory to at least 2GB (1GB isn't enough)
+
+Note: consider DNS fix for vagrant: DNS can be more reliable if, once after first creating VM, you shut down VM (vagrant halt) and
 ```
+vboxmanage list vms
+vboxmanage modifyvm "databox-101_default_XXXX" --natdnshostresolver1 on
 vagrant up
 ```
 
-Make a second disk and add in (in the VirtualBox UI) - the default 10GB won't be enough.
-Take the VM again down before you do. Make sure you work in there!
+## Alpine set-up
 
-Format the disk (here assuming 3rd disk, 'c'):
 ```
-sudo fdisk -u /dev/sdc <<EOF
-n
-p
-1
-
-
-t
-83
-w
-EOF
-sudo mkfs -t ext4 /dev/sdc
-sudo mount /dev/sdc /srv
-sudo mkdir /srv/databox
-sudo chown $USER /srv/databox
-sudo mkdir /srv/docker
-```
-And add `/dev/sdc /srv` to `/etc/fstab` (as root)
-
-See [docs](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository)
-```
-sudo apt-get update
-sudo apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo apt-key fingerprint 0EBFCD88
-```
-Verify that you now have the key with the fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88, 
-```
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-sudo apt-get update
-sudo apt-get install -y docker-ce
-```
-Optional,
-```
-sudo docker run hello-world
+sudo apk update
+sudo apk upgrade
 ```
 
-Change where docker stores images, etc. 
+### Docker 
+
+Install docker (to run without sudo):
 ```
-sudo sh
-cd /var/lib/docker
-tar zcf /srv/docker.tgz *
-cd ..
-mv docker docker.1
-cd /srv/docker
-tar zxf ../docker.tgz
-ln -s /srv/docker /var/lib/docker
+sudo apk add docker
+sudo rc-update add docker boot
+sudo service docker start
+sudo docker version
+sudo adduser $USER docker
+docker run hello-world
+```
+(version 18.09.1-ce)
+
+Docker is installed in boot runlevel. 
+By default docker needs sysfs, cgroups (only)
+
+Docker files are all (by default) in /var/lib/docker (logs in /var/log/docker*)
+
+non-root docker:
+```
 ```
 
-Docker compose, see [docs](https://docs.docker.com/compose/install/#install-compose):
+
+### Other Databox dependencies
+
+(as of 0.5.2)
+- git
+- make
+- wget
+- npm/node (should go away as a dependency from 0.5.2 release)
+
 ```
-sudo curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-Optionally,
-```
-docker-compose --version
+sudo apk add git
+sudo apk add build-base
+sudo apk add wget
+sudo apk add npm
 ```
 
-Note, in VM running docker requires sudo which is not used in the scripts...
-See [docs](https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
-```
-sudo usermod -aG docker $USER
-```
-Log out / reboot VM
 
-Run on boot...
+
+### Git setup
+
+Consider setting username & email if committing with git:
 ```
-sudo systemctl enable docker
+git config --global user.email "XXX"
+git config --global user.name "XXX"
 ```
 
-Open port 8989 (main UI), 8181 (CM API?), 8086 (SDK), 9090 (SDK test).
+## Databox set-up
 
-## Initial setup
-
-See https://github.com/me-box/databox
-
-Install docker for mac/windows (or docker toolbox if Windows < 10) (and docker-compose if not present)
+See [databox repo](https://github.com/me-box/databox).
+Right now I'm working from branch 0.5.2-dev since it hasn't been released yet.
 
 ```
 git clone https://github.com/me-box/databox.git
+git fetch
+git checkout 0.5.2-dev
 ```
-Note, dev command-line option not in https://github.com/me-box/databox/blob/master/README.md as of 2017-09-25
+Note, consider changing core-ui to use branch `0.5.2-dev` rather than `master` (in Makefile)
+
+Local build...
 ```
-cd databox
-./databox-start dev
-```
-
-minor issue:
-- install/start OS monitor driver and view UI quickly -> no reported error (UI stall, underlying 404)
-
-
-How to access from mobile app?
-
-## Various problems
-
-### Docker toolbox issues
-
-```
-$ ./databox-start dev
+make build-linux-amd64 get-containers-src build-core-containers ARCH=amd64
 ```
 
-#### Error 1
+Run
 ```
-[2017-09-25T11:31:51+0100 databox-start]: docker is not installed;see https://docs.docker.com/engine/installation/
-```
-Fails to detect docker installed.
-See https://github.com/me-box/databox/issues/98 
-
-#### Error 2
-```
-...
-[2017-09-25T11:41:53+0100 databox-start]: extracting host interface IP address ...
-./databox-start: line 71: ifconfig: command not found
-[2017-09-25T11:41:53+0100 databox-start]: host interface IP address =
-```
-External IP address determination fails with lack of ifconfig.
-
-```
-export EXT_IP=128.243.22.74
+make start ARCH=amd64
 ```
 
+Stop 
 ```
-Error response from daemon: must specify a listening address because the address to advertise is not recognized as a system address, and a system's IP address to use could not be uniquely identified
-```
-
-### Docker on linux issues
-
-#### docker-compose
-
-make sure you install the latest one as per the docker website, don't just
-apt-get install docker-compose!
-
-#### networking / dns
-
-Probably specific to local network configuration and/or blocking 8.8.8.8 nameserver.
-Actually, probably only because I plugged it into the Ethernet and I probably have
-a non-standard set-up
-
-Initially visible as fail to buil code-container-manager at 3rd step (npm) with EAI_AGAIN i.e. DNS timeout.
-
-Verified by 
-```
-docker run -it --rm node:alpine /bin/sh
-ping www.google.com
+make stop ARCH=amd64
 ```
 
-for fix see [this answer](https://stackoverflow.com/questions/24991136/docker-build-could-not-resolve-archive-ubuntu-com-apt-get-fails-to-install-a)
-which involves getting local organisation DNS servers and forcing docker to use them:
+
+Apps/drivers
 ```
-nmcli dev show | grep 'IP4.DNS'
-sudo su root
-cd /etc/docker
-vi daemon.json
-{
-  "dns": ["X.X.X.X", "X.X.X.X"]
-} 
-exit
-sudo service docker restart
+make build-app-drivers ARCH=amd64
 ```
 
-## SDK
+## Databox app/driver
+
+See the [databox quickstart](https://github.com/me-box/databox-quickstart/).
+
+It includes sample core code, e.g. [go app](https://github.com/me-box/databox-quickstart/tree/0.5.2-dev/go/app)
+
+### Build
+
+Clone into databox/build
 
 ```
-./databox-start sdk
+make build-amd64 DEFAULT_REG=databoxsystems VERSION=0.5.2
 ```
+Note, building the core-ui may not work over a mounted windows filesystem.
 
-Follow on-screen instructions (open http://127.0.0.1:8086/, go to github, set up oatch, copy ID/key to sdk/settings.json, restart)
-
-Make app
-
-test - ok?? don't see any messages for any of the built-in sources.
-save - ok
-publish - hangs on 'http://localhost:8086/github/publish' -> 500
-
-Note: need to reload databox app to get new app in store view?!
-
-Start - ok?!
-View UI - cannot get ...
-
-## Mobile app (test)
-
-### Emulator
-
-Install Android Studio. Standard start-up.
-
-(using Android 7.1 google play image) doesn't find databox app in app store.
-
-Installing directly from APK:
-- cannot discover databox
-- host IP => access OK
-- can start sensing but driver cannot connect back to phone 
-  - probably the emulator is behind its own NAT (reports using a 10.... address)
-  - sensingkit runs nanohttpd on port 8080 on phone (?!)
-
-Tried [port forwarding](https://developer.android.com/studio/run/emulator-networking.html)
-to emulator but connections are immediately terminated. 
-
-### Physical device
-
-#### Eduroam 
-
-no access to my desktop
-
-#### UoN VPN
-
-[VPN info](http://www.nottingham.ac.uk/it-services/connect/working/off-campus.aspx)
-
-Install app, join VPN -> no access to my desktop.
-
-### WiFi 
-
-OK on my home network to my laptop (both on wireless).
-
-WiFi adapter ... ?
-
-### Laptop
-
-Install ubuntu 16.04, docker, etc.
-
-Local wired network issue:
-node:alpine container can't resolve DNS addresses...!!
-(OK on desktop, OK in terminal outside docker).
-
-## VPN
-
-### UoN VPN
-
-UoN https://vpntest.nottingham.ac.uk
-
-Groups:
-- IPSEC_PRIVATE
-- IPSEC_PUBLIC
-- SSL_PRIVATE
-- SSL_PUBLIC
-
-Configure using openconnect, [info](https://github.com/dnschneid/crouton/wiki/Using-Cisco-AnyConnect-VPN-with-openconnect)
-
-```
-sudo apt-get install -y openvpn openconnect
-
-VPNGRP=my-vpn-group
-VPNUSER=my-vpn-user
-VPNURL=https://vpn.mydomain.com
-
-sudo openvpn --mktun --dev tun1 && \
-sudo ifconfig tun1 up && \
-sudo /usr/sbin/openconnect $VPNURL --user=$VPNUSER --authgroup=$VPNGRP --interface=tun1
-i.e.
-sudo /usr/sbin/openconnect https://vpntest.nottingham.ac.uk --user=pszcmg --authgroup=IPSEC_PRIVATE --interface=tun1
-
-sudo ifconfig tun1 down
-sudo openvpn --rmtun --dev tun1
-
-```
-
-With IPSEC_PRIVATE remote server sees client IP:
-- Browser on host: 128.243.22.74
-- VM w Tunnel up: 10.159.250.18
-- VM w tunnel down: 128.243.22.74
-
-But two devices on VPN can't communicate (on port 8989, anyway!)
-Perhaps just local filtering/firewall rules?
-
-Cannot connect IPSEC_PUBLIC.
-
-From UoN server can ping 10.... internal IP address.
-
-### Own VPN
-
-... ??
-
-## Build an app
+Open app store in Databox UI and add manifest.
 
