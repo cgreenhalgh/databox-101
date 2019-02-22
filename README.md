@@ -49,10 +49,35 @@ By default docker needs sysfs, cgroups (only)
 
 Docker files are all (by default) in /var/lib/docker (logs in /var/log/docker*)
 
-non-root docker:
+With the above I get a seg fault building driver-os-monitor when it runs npm. Why?
+Doesn't do it in Debian stretch!
+
+And [this](https://wiki.alpinelinux.org/wiki/Docker) ??
+
+With Extlinux you also add the cgroup condition but inside /etc/update-extlinux.conf
 ```
+default_kernel_opts="... cgroup_enable=memory swapaccount=1"
+```
+than update the config and reboot
+```
+update-extlinux
 ```
 
+```
+echo "cgroup /sys/fs/cgroup cgroup defaults 0 0" >> /etc/fstab
+cat >> /etc/cgconfig.conf <<EOF
+mount {
+cpuacct = /cgroup/cpuacct;
+memory = /cgroup/memory;
+devices = /cgroup/devices;
+freezer = /cgroup/freezer;
+net_cls = /cgroup/net_cls;
+blkio = /cgroup/blkio;
+cpuset = /cgroup/cpuset;
+cpu = /cgroup/cpu;
+}
+EOF
+```
 
 ### Other Databox dependencies
 
