@@ -112,6 +112,7 @@ Right now I'm working from branch 0.5.2-dev since it hasn't been released yet.
 ```
 git clone https://github.com/me-box/databox.git
 git fetch
+cd databox
 git checkout 0.5.2-dev
 ```
 Note, consider changing core-ui to use branch `0.5.2-dev` rather than `master` (in Makefile)
