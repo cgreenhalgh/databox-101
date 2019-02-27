@@ -46,6 +46,7 @@ vboxmanage list vms
 vboxmanage modifyvm "debian_default_XXXX" --natdnshostresolver1 on
 vagrant up
 ```
+(on windows vboxmanage is in c:\Windows\Program Files\Oracle\VirtualBox)
 
 ### File sync
 
