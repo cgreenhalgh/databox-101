@@ -23,8 +23,8 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 443, host: 443
+  #config.vm.network "forwarded_port", guest: 80, host: 8080
+  #config.vm.network "forwarded_port", guest: 443, host: 443
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -38,7 +38,13 @@ Vagrant.configure("2") do |config|
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  # config.vm.network "public_network"
+  config.vm.network "public_network"
+  # hack https://github.com/hashicorp/vagrant/issues/2093 ?!
+  config.vm.provider 'virtualbox' do |vb|
+    vb.customize ['modifyvm',:id, '--nic1', 'bridged', '--nic2', 'nat'] # swap the networks around
+    vb.customize ['modifyvm', :id, '--natpf2', "ssh,tcp,127.0.0.1,52222,,22" ] #port forward
+  end
+  config.vm.network "forwarded_port", id: 'ssh', guest: 22, host_ip: '127.0.0.1', host: 52222, auto_correct: false, adapter: 1
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -52,7 +58,7 @@ Vagrant.configure("2") do |config|
   #
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
-    # vb.gui = true
+    vb.gui = true
 
     # Enable the VM's virtual USB controller & enable the virtual USB 3 (xhci) or 2.0 (ehci) controller
     vb.customize ["modifyvm", :id, "--usb", "on", "--usbxhci", "on"]  

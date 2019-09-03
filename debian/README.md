@@ -1,7 +1,5 @@
 # Debian databox build
 
-Alpine64 is failing to build driver-os-monitor. Don't know why.
-
 ## Vagrant
 
 If you're using Vagrant to make the debian VM...
@@ -38,14 +36,10 @@ sudo vi /etc/fstab
 ```
 Reboot.
 
-### fix DNS
+### Don't fix DNS
 
-Note: consider DNS fix for vagrant: DNS can be more reliable if, once after first creating VM, you shut down VM (vagrant halt) and
-```
-vboxmanage list vms
-vboxmanage modifyvm "debian_default_XXXX" --natdnshostresolver1 on
-vagrant up
-```
+See the comments in the [top level README](../README.md)
+
 (on windows vboxmanage is in c:\Windows\Program Files\Oracle\VirtualBox)
 
 ### File sync

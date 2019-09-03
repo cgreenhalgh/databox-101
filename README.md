@@ -2,99 +2,31 @@
 
 Building/running, and basis for provenance explorations.
 
-Databox 0.5.2-dev, 2019-02-22
+Databox 0.5.2, 2019-09-03
 
 Chris Greenhalgh, The University of Nottingham
 
 ## Vagrant
 
-Includes Alpine 64bit [vagrant](https://www.vagrantup.com/) file for (e.g.) Windows dev.
+Hitting obscure problems using [Alpine](alpine/README.md), 
+so I suggest [Debian](debian/README.md) for now. 
 
-if using Vagrant
-```
-vagrant up
-vagrant ssh
-cd /vagrant
-```
+Note, Docker & Databox are really fussy about networking and DNS config.
+So best to leave DNS to default, but this may mean restarting VM/docker/Databox
+when the network changes. 
 
-Note: consider DNS fix for vagrant: DNS can be more reliable if, once after first creating VM, you shut down VM (vagrant halt) and
-```
-vboxmanage list vms
-vboxmanage modifyvm "databox-101_default_XXXX" --natdnshostresolver1 on
-vagrant up
-```
+Check /etc/resolv.conf for DNS config (picked up by docker) - 
+remember UoN won't allow use of 8.8.8.8 from at least some of its networks.
 
-## Alpine set-up
+Check that databox-network can (a) do arbitrary DNS lookups and 
+(b) actually exchange traffic with external machines.
 
-```
-sudo apk update
-sudo apk upgrade
-```
+Also e.g. check that the app-store shows a list of apps - if not 
+https from github is probably failing. Check databox-network for any errors
+or refusal to look up. Check manual (wget) http from app-store container.
 
-### Docker 
-
-Install docker (to run without sudo):
-```
-sudo apk add docker
-sudo rc-update add docker boot
-sudo service docker start
-sudo docker version
-sudo adduser $USER docker
-docker run hello-world
-```
-(version 18.09.1-ce)
-
-Docker is installed in boot runlevel. 
-By default docker needs sysfs, cgroups (only)
-
-Docker files are all (by default) in /var/lib/docker (logs in /var/log/docker*)
-
-With the above I get a seg fault building driver-os-monitor when it runs npm. Why?
-Doesn't do it in Debian stretch!
-
-And [this](https://wiki.alpinelinux.org/wiki/Docker) ??
-
-With Extlinux you also add the cgroup condition but inside /etc/update-extlinux.conf
-```
-default_kernel_opts="... cgroup_enable=memory swapaccount=1"
-```
-than update the config and reboot
-```
-update-extlinux
-```
-
-```
-echo "cgroup /sys/fs/cgroup cgroup defaults 0 0" >> /etc/fstab
-cat >> /etc/cgconfig.conf <<EOF
-mount {
-cpuacct = /cgroup/cpuacct;
-memory = /cgroup/memory;
-devices = /cgroup/devices;
-freezer = /cgroup/freezer;
-net_cls = /cgroup/net_cls;
-blkio = /cgroup/blkio;
-cpuset = /cgroup/cpuset;
-cpu = /cgroup/cpu;
-}
-EOF
-```
-
-### Other Databox dependencies
-
-(as of 0.5.2)
-- git
-- make
-- wget
-- npm/node (should go away as a dependency from 0.5.2 release)
-
-```
-sudo apk add git
-sudo apk add build-base
-sudo apk add wget
-sudo apk add npm
-```
-
-
+Note - sensitive to network interfaces - debian vagrant file has fixes to
+make eth0 a brigded interface, which seems to work.
 
 ### Git setup
 
@@ -102,40 +34,6 @@ Consider setting username & email if committing with git:
 ```
 git config --global user.email "XXX"
 git config --global user.name "XXX"
-```
-
-## Databox set-up
-
-See [databox repo](https://github.com/me-box/databox).
-Right now I'm working from branch 0.5.2-dev since it hasn't been released yet.
-
-```
-git clone https://github.com/me-box/databox.git
-git fetch
-cd databox
-git checkout 0.5.2-dev
-```
-Note, consider changing core-ui to use branch `0.5.2-dev` rather than `master` (in Makefile)
-
-Local build...
-```
-make build-linux-amd64 get-containers-src build-core-containers ARCH=amd64
-```
-
-Run
-```
-make start ARCH=amd64
-```
-
-Stop 
-```
-make stop ARCH=amd64
-```
-
-
-Apps/drivers
-```
-make build-app-drivers ARCH=amd64
 ```
 
 ## Databox app/driver
