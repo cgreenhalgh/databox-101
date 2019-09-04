@@ -49,6 +49,49 @@ Note, once vagrant up, to keep syncing the /vagrant directory you need to (also)
 vagrant rsync-auto
 ```
 
+### X windows
+
+If required...
+
+e.g. LXDE window manager/desktop environment ("lightweight")
+```
+sudo apt install xorg
+sudo apt install task-lxde-desktop
+```
+(otherwise just a window manager and some other bits will be enough...)
+```
+
+On console (Vagrant user 'vagrant' password 'vagrant'):
+```
+startx
+```
+?!
+
+### Vim setup
+
+```
+sudo apt install vim
+```
+
+[pathogen](https://github.com/tpope/vim-pathogen)
+```
+mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+vi ~/.vimrc
+```
+insert
+```
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+```
+then
+```
+cd ~/.vim/bundle && \
+git clone https://github.com/tpope/vim-sensible.git
+git clone https://github.com/pangloss/vim-javascript.git ~/.vim/bundle/vim-javascript
+```
+
 ### set up
 
 Standard docker on debian install:
