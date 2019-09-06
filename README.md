@@ -123,3 +123,22 @@ tab, and doesn't redirect into the main app or close.
 
 The driver worked for me with my Lloyds account (Minos has been testing with
 Monzo).
+
+## Sensing Kit
+
+With 0.5.2...
+Installed OK from phone.
+Turning on light makes something happen in driver (including a memory leak error warning)
+But light graph application didn't show anything or give any output.
+
+Updated both to use lib-node-databox 0.5.2 and seems ok.
+
+## changing default components
+
+Note, even for apps/drivers that are in the app store (i.e. not just core components)
+it always seems to use the dockerhub versions.
+
+Try overiding the manifest store on databox start...
+```
+... --manifestStore https://github.com/cgreenhalgh/databox-manifest-store
+```
