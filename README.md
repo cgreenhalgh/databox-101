@@ -27,6 +27,7 @@ or refusal to look up. Check manual (wget) http from app-store container.
 
 Note - sensitive to network interfaces - debian vagrant file has fixes to
 make eth0 a brigded interface, which seems to work.
+If you get an error from the first `vagrant up` just try again...
 
 ### Git setup
 
@@ -142,3 +143,40 @@ Try overiding the manifest store on databox start...
 ```
 ... --manifestStore https://github.com/cgreenhalgh/databox-manifest-store
 ```
+
+### using custom components
+
+Another option might be to use a custom version/tag, say `local`.
+
+e.g. pull core components & tag
+```
+docker pull databoxsystems/databox:0.5.2
+docker tag databoxsystems/databox:0.5.2 databoxsystems/databox:local
+IMAGES="container-manager core-network core-network-relay core-store arbiter export-service core-ui driver-app-store driver-tplink-smart-plug driver-os-monitor app-os-monitor driver-sensingkit app-light-graph driver-twitter"
+for i in $IMAGES; do 
+  docker pull databoxsystems/$i-amd64:0.5.2
+  docker tag databoxsystems/$i-amd64:0.5.2 databoxsystems/$i-amd64:local
+done
+```
+
+run using that tag
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t databoxsystems/databox:local /databox start -sslHostName $(hostname) -manifestStore https://github.com/cgreenhalgh/databox-manifest-store -release local 
+```
+
+As of 2019-09-26, 0.5.2, I have fixes for 
+- driver-sensingkit cgreenhalgh branch lib-node-0.10
+- app-light-graph cgreenhalgh branch lib-node-0.10
+- databox-quickstart node app and driver
+
+
+### on arm...
+
+Currently I get errors from app-os-monitor (0.5.2 standard image)...
+```
+app-os-monitor.1.0ivmx5f2kyz7@databox    | tcp://driver-os-monitor-core-store:5555
+app-os-monitor.1.0ivmx5f2kyz7@databox    | makeArbiterPostRequest /token Error::  Can't connect so server
+app-os-monitor.1.0ivmx5f2kyz7@databox    | Error getting last N  freemem Error getting Arbiter Token: 500:
+...
+```
+
