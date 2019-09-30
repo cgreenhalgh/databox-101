@@ -176,6 +176,7 @@ As of 2019-09-26, 0.5.2, I have fixes for
 - app-light-graph cgreenhalgh branch lib-node-0.10
 - databox-quickstart node app and driver, go app and driver arm build
 - driver-tplink-smart-plug cgreenhalgh branch alt-plug-lib
+- driver-twitter cgreenhalgh branch no-user-stream
 
 ### on arm...
 
