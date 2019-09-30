@@ -59,7 +59,6 @@ sudo apt install xorg
 sudo apt install task-lxde-desktop
 ```
 (otherwise just a window manager and some other bits will be enough...)
-```
 
 On console (Vagrant user 'vagrant' password 'vagrant'):
 ```

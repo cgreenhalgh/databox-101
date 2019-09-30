@@ -151,17 +151,24 @@ Another option might be to use a custom version/tag, say `local`.
 e.g. pull core components & tag
 ```
 docker pull databoxsystems/databox:0.5.2
-docker tag databoxsystems/databox:0.5.2 databoxsystems/databox:local
+docker tag databoxsystems/databox:0.5.2 databoxsystems/databox:cmg
 IMAGES="container-manager core-network core-network-relay core-store arbiter export-service core-ui driver-app-store driver-tplink-smart-plug driver-os-monitor app-os-monitor driver-sensingkit app-light-graph driver-twitter"
 for i in $IMAGES; do 
   docker pull databoxsystems/$i-amd64:0.5.2
-  docker tag databoxsystems/$i-amd64:0.5.2 databoxsystems/$i-amd64:local
+  docker tag databoxsystems/$i-amd64:0.5.2 databoxsystems/$i-amd64:cmg
+done
+```
+or arm
+```
+for i in $IMAGES; do 
+  docker pull databoxsystems/$i-arm64v8:0.5.2
+  docker tag databoxsystems/$i-arm64v8:0.5.2 databoxsystems/$i-arm64v8:cmg
 done
 ```
 
 run using that tag
 ```
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t databoxsystems/databox:local /databox start -sslHostName $(hostname) -manifestStore https://github.com/cgreenhalgh/databox-manifest-store -release local 
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t databoxsystems/databox:cmg /databox start -sslHostName $(hostname) -release cmg
 ```
 
 As of 2019-09-26, 0.5.2, I have fixes for 
@@ -179,4 +186,6 @@ app-os-monitor.1.0ivmx5f2kyz7@databox    | makeArbiterPostRequest /token Error::
 app-os-monitor.1.0ivmx5f2kyz7@databox    | Error getting last N  freemem Error getting Arbiter Token: 500:
 ...
 ```
+resolved by rebuilding after fixing Dockerfile-arm64v8 to specify alpine:3.8 
+for deploy as well as build image base.
 
