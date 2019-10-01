@@ -175,7 +175,7 @@ As of 2019-09-26, 0.5.2, I have fixes for
 - driver-sensingkit cgreenhalgh branch lib-node-0.10
 - app-light-graph cgreenhalgh branch lib-node-0.10
 - databox-quickstart node app and driver, go app and driver arm build
-- driver-tplink-smart-plug cgreenhalgh branch alt-plug-lib
+- driver-tplink-smart-plug cgreenhalgh branch fast-plug
 - driver-twitter cgreenhalgh branch no-user-stream
 
 ### on arm...
