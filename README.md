@@ -191,3 +191,16 @@ app-os-monitor.1.0ivmx5f2kyz7@databox    | Error getting last N  freemem Error g
 resolved by rebuilding after fixing Dockerfile-arm64v8 to specify alpine:3.8 
 for deploy as well as build image base.
 
+### resource temporarily unavailable
+
+seem to be getting this sometimes. 
+tends to be failure of get token from arbiter.
+e.g. from core-ui to arbiter.
+apparently this can be caused by a non-blocking socket write failing.
+
+
+### driver not starting properly
+
+sometime the new driver-message-view stalls after registering one datasource,
+but not the second, or getting old values.
+is it a race with opening the ws to the client?? 
