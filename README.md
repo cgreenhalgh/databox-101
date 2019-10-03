@@ -178,6 +178,12 @@ As of 2019-09-26, 0.5.2, I have fixes for
 - driver-tplink-smart-plug cgreenhalgh branch fast-plug
 - driver-twitter cgreenhalgh branch no-user-stream
 - driver-truelayer cgreenhalgh branch master
+- core-ui ktg branch master
+
+and my extra components:
+- driver-message-view cgreenhalgh
+- app-automate cgreenhalgh
+
 
 ### on arm...
 
@@ -198,6 +204,7 @@ tends to be failure of get token from arbiter.
 e.g. from core-ui to arbiter.
 apparently this can be caused by a non-blocking socket write failing.
 
+trying newer core-ui self-build... (no news yet)
 
 ### driver not starting properly
 
