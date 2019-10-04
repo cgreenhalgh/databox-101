@@ -185,9 +185,77 @@ and my extra components:
 - app-automate cgreenhalgh
 - driver-button-view cgreenhalgh
 
+### re-tagging
+
+So i'll re-tag some for use in class...
+```
+IMAGES="container-manager core-network core-network-relay core-store arbiter export-service core-ui driver-app-store driver-tplink-smart-plug driver-os-monitor app-os-monitor driver-sensingkit app-light-graph driver-twitter driver-truelayer driver-message-view driver-button-view app-automate"
+for i in $IMAGES; do 
+  docker tag databoxsystems/$i-amd64:cmg cgreenhalgh/$i-amd64:ena2019
+done
+for i in $IMAGES; do 
+  docker push cgreenhalgh/$i-amd64:ena2019
+done
+```
+
+Run my version...if dare...
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t \
+databoxsystems/databox:0.5.2 /databox start -sslHostName $(hostname) \
+-registry cgreenhalgh -release ena2019 \
+-cm cgreenhalgh/container-manager -core-ui cgreenhalgh/core-ui \
+-arbiter cgreenhalgh/arbiter -core-network cgreenhalgh/core-network \
+-core-network-relay cgreenhalgh/core-network-relay -app-server cgreenhalgh/driver-app-store \
+-export-service cgreenhalgh/export-service -store cgreenhalgh/core-store \
+-manifestStore https://github.com/cgreenhalgh/databox-manifest-store
+```
+(add `-flushSLAs` to avoid restarting old components automatically)
+
+and stop...
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t \
+databoxsystems/databox:0.5.2 /databox stop
+```
+
+### to try...
+
+1. install [docker](www.docker.com)
+1. start databox (see above)
+1. if planning to use the app, extract the QR code as above
+1. (optional) install app on phone and scan the QR code to connect/log in
+1. (and/or) open browser and direct to 127.0.0.1, follow link to "DATABOX DASHBOARD", persuading your browser to proceed in spite
+
+1. Select App Store, then driver-os-monitor and install
+1. Select App Store, then app-os-monitor; for each datasource (selector) select the (only) available option, then install
+1. Select app-os-monitor - you should see some load and memory usage graphs
+
+1. Select App Store, then driver-sensingkit and install
+1. Select App Store, then app-light-graph, select input, then install
+1. Select app-light-graph and look at the (empty) graph
+1. In the databox phone app, select Sensing Kit, and tick the checkbox "Light"
+1. With the app on/visible, put your hand over the light sensor and watch the app-light-graph change...
+
+1. From app store, install: driver-button-view, driver-message-view, driver-twitter, driver-truelayer, driver-tplink-smart-plug
+1. Open the driver-tplink-smart-plug, enter the local subnet IP prefix and press scan. repeat until any local smart plugs are visible*
+1. Open the driver-message-view; copy to a new tab
+1. Open the driver-message-button; copy to a new tab
+1. From app store select app-automate, select an input for every datasource and install
+1. Open app-automate and play. e.g. cover the phone light sensor and the plug should go off and a message should be sent. Use the on/off "fire" options to turn the plug on/off.
+1. Read the app-automate [docs](https://github.com/cgreenhalgh/app-automate) and add some rules - have fun...
+
+1. (optional) From main menu, open driver-twitter and configure - see [instructions]
+(https://github.com/cgreenhalgh/driver-twitter/tree/no-user-stream)
+1. (optional) From main menu, open driver-truelayer and configure - see [instructions](https://github.com/cgreenhalgh/driver-truelayer)
+1. got back to app-automate and do something with those data sources
+
+*Hmmm:
+- needs a TPLink plug... need a mock plug!
+
+## oddities and issues
+
 ### on arm...
 
-Currently I get errors from app-os-monitor (0.5.2 standard image)...
+I got errors from app-os-monitor (0.5.2 standard image)...
 ```
 app-os-monitor.1.0ivmx5f2kyz7@databox    | tcp://driver-os-monitor-core-store:5555
 app-os-monitor.1.0ivmx5f2kyz7@databox    | makeArbiterPostRequest /token Error::  Can't connect so server
@@ -197,9 +265,10 @@ app-os-monitor.1.0ivmx5f2kyz7@databox    | Error getting last N  freemem Error g
 resolved by rebuilding after fixing Dockerfile-arm64v8 to specify alpine:3.8 
 for deploy as well as build image base.
 
-## oddities
-
 ### connect to new component ui often fails initially
+
+Just stalls then times out.
+Usually ok on reload.
 
 ### resource temporarily unavailable
 
@@ -215,3 +284,5 @@ trying newer core-ui self-build... (no news yet)
 sometime the new driver-message-view stalls after registering one datasource,
 but not the second, or getting old values.
 is it a race with opening the ws to the client?? 
+
+maybe driver-button-view doesn't always get the initial value either?!
