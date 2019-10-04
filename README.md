@@ -191,3 +191,12 @@ app-os-monitor.1.0ivmx5f2kyz7@databox    | Error getting last N  freemem Error g
 resolved by rebuilding after fixing Dockerfile-arm64v8 to specify alpine:3.8 
 for deploy as well as build image base.
 
+## oddities
+
+### resource temporarily available
+
+sometimes seen this on failed arbiter token requests - apparently
+due to a non-blocking send failing?!
+
+### connect to new component ui often fails initially
+
