@@ -172,13 +172,13 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t d
 ```
 
 As of 2019-09-26, 0.5.2, I have fixes for 
-- driver-sensingkit cgreenhalgh branch lib-node-0.10
-- app-light-graph cgreenhalgh branch lib-node-0.10
-- databox-quickstart node app and driver, go app and driver arm build
-- driver-tplink-smart-plug cgreenhalgh branch fast-plug
-- driver-twitter cgreenhalgh branch no-user-stream
-- driver-truelayer cgreenhalgh branch master
-- core-ui ktg branch master
+- [driver-sensingkit cgreenhalgh branch lib-node-0.10](https://github.com/cgreenhalgh/driver-sensingkit/tree/lib-node-0.10)
+- [app-light-graph cgreenhalgh branch lib-node-0.10](https://github.com/cgreenhalgh/app-light-graph/tree/lib-node-0.10)
+- [databox-quickstart node app and driver, go app and driver arm build, cgreenhalgh branch 0.10-export](https://github.com/cgreenhalgh/databox-quickstart/tree/0.10-export)
+- [driver-tplink-smart-plug cgreenhalgh branch fast-plug](https://github.com/cgreenhalgh/driver-tplink-smart-plug/tree/fast-plug)
+- [driver-twitter cgreenhalgh branch no-user-stream](https://github.com/cgreenhalgh/driver-twitter/tree/no-user-stream)
+- [driver-truelayer cgreenhalgh branch master](https://github.com/cgreenhalgh/driver-truelayer)
+- [core-ui ktg branch master](https://github.com/ktg/core-ui)
 
 and my extra components:
 - driver-message-view cgreenhalgh
