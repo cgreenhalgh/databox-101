@@ -184,6 +184,7 @@ and my extra components:
 - [driver-message-view cgreenhalgh](https://github.com/cgreenhalgh/driver-message-view)
 - [app-automate cgreenhalgh](https://github.com/cgreenhalgh/app-automate)
 - [driver-button-view cgreenhalgh](https://github.com/cgreenhalgh/driver-button-view)
+- [driver-mock-smart-plug](https://github.com/cgreenhalgh/driver-mock-smart-plug)
 
 ### re-tagging
 
@@ -235,8 +236,11 @@ databoxsystems/databox:0.5.2 /databox stop
 1. In the databox phone app, select Sensing Kit, and tick the checkbox "Light"
 1. With the app on/visible, put your hand over the light sensor and watch the app-light-graph change...
 
-1. From app store, install: driver-button-view, driver-message-view, driver-twitter, driver-truelayer, driver-tplink-smart-plug
-1. Open the driver-tplink-smart-plug, enter the local subnet IP prefix and press scan. repeat until any local smart plugs are visible*
+1. From app store, install: driver-button-view, driver-message-view, driver-twitter, driver-truelayer
+
+1. If you have a TPlink smart plug then install driver-tplink-smart-plug, open the driver-tplink-smart-plug, enter the local subnet IP prefix and press scan. repeat until any local smart plugs are visible
+1. If you don't then install driver-mock-smart-plug, open its UI and copy to a new tab (it will show the plug "state")
+
 1. Open the driver-message-view; copy to a new tab
 1. Open the driver-message-button; copy to a new tab
 1. From app store select app-automate, select an input for every datasource and install
@@ -244,12 +248,9 @@ databoxsystems/databox:0.5.2 /databox stop
 1. Read the app-automate [docs](https://github.com/cgreenhalgh/app-automate) and add some rules - have fun...
 
 1. (optional) From main menu, open driver-twitter and configure - see [instructions]
-(https://github.com/cgreenhalgh/driver-twitter/tree/no-user-stream)
-1. (optional) From main menu, open driver-truelayer and configure - see [instructions](https://github.com/cgreenhalgh/driver-truelayer)
-1. got back to app-automate and do something with those data sources
-
-*Hmmm:
-- needs a TPLink plug... need a mock plug!
+(https://github.com/cgreenhalgh/driver-twitter/tree/no-user-stream) - note that some of the oauth steps can only be done from a browser on 127.0.0.1
+1. (optional) From main menu, open driver-truelayer and configure - see [instructions](https://github.com/cgreenhalgh/driver-truelayer) - note that some of the oauth steps can only be done from a browser on 127.0.0.1
+1. go back to app-automate and do something with those data sources
 
 ## oddities and issues
 
