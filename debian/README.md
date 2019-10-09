@@ -126,6 +126,8 @@ sudo apt-get install -y nodejs
 
 ## Databox
 
+You may want to switch back to the top-level [README](../README.md) now...
+
 0.5.2 just released, so try local build from master...
 ```
 git clone https://github.com/me-box/databox.git
@@ -139,18 +141,7 @@ make build-app-drivers ARCH=amd64
 
 NB need to use port 443 for SSH even on VM.
 
-## App
-
-```
-got clone https://github.com/cgreenhalgh/app-audit.git
-cd app-audit
-make build-amd64 DEFAULT_REG=databoxsystems VERSION=0.5.2
-```
-Open app store in Databox UI and add manifest.
-
 ## databox issues
-
-Attempt to upload my manifest to app-store settings returns "Incorrect file format" from Chrome/Windows.
 
 When doing a local build and tag of (e.g.) databoxsystems/driver-app-store-amd64:0.5.2 starting databox still picks up the one from dockerhub.
 E.g.

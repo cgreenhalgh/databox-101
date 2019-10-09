@@ -17,3 +17,10 @@ which uses [message databox_oauth_redirect](https://github.com/me-box/driver-twi
 on `ui/oauth` redirects to [core-ui driver view](https://github.com/me-box/driver-twitter/blob/master/src/main.js#L93).
 
 Not clear atm where `databox:` URL scheme is introduced or handled.
+
+This is changing in the [latest core-ui](https://github.com/ktg/core-ui) -
+see [corresponding twitter driver](https://github.com/ktg/driver-twitter/tree/oauth),
+which uses `let callbackURL = parent.getOauthCallbackURL();` and
+`parent.startOauth(url);`
+
+This is probably not in the 0.5.7 app.

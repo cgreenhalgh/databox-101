@@ -181,9 +181,9 @@ As of 2019-09-26, 0.5.2, I have fixes for
 - [core-ui ktg branch master](https://github.com/ktg/core-ui)
 
 and my extra components:
-- driver-message-view cgreenhalgh
-- app-automate cgreenhalgh
-- driver-button-view cgreenhalgh
+- [driver-message-view cgreenhalgh](https://github.com/cgreenhalgh/driver-message-view)
+- [app-automate cgreenhalgh](https://github.com/cgreenhalgh/app-automate)
+- [driver-button-view cgreenhalgh](https://github.com/cgreenhalgh/driver-button-view)
 
 ### re-tagging
 
